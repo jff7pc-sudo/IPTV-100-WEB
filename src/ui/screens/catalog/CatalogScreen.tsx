@@ -1,0 +1,224 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import React, { useEffect, useState } from 'react';
+import { useAppStore } from '../../../di/AppModule';
+import { Category, Stream } from '../../../domain/model/types';
+import { TvMovieCard } from '../../components/TvMovieCard';
+import { VideoPlayer } from '../../../player/VideoPlayer';
+import { SeriesDetail } from '../../components/SeriesDetail';
+import { Search, Filter, Loader2, ChevronRight, ChevronLeft } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+
+interface CatalogScreenProps {
+  type: 'movie' | 'series';
+}
+
+export const CatalogScreen: React.FC<CatalogScreenProps> = ({ type }) => {
+  const repo = useAppStore((state) => state.repo);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [streams, setStreams] = useState<Stream[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [selectedStream, setSelectedStream] = useState<Stream | null>(null);
+  const [selectedSeries, setSelectedSeries] = useState<Stream | null>(null);
+  const [selectedEpisode, setSelectedEpisode] = useState<any>(null);
+  const [favorites, setFavorites] = useState<number[]>([]);
+
+  const [displayLimit, setDisplayLimit] = useState(50);
+
+  useEffect(() => {
+    if (!repo) return;
+    setFavorites(repo.getFavorites());
+
+    const loadData = async () => {
+      setLoading(true);
+      try {
+        let cats: Category[] = [];
+        if (type === 'movie') cats = await repo.getVodCategories();
+        else if (type === 'series') cats = await repo.getSeriesCategories();
+        setCategories(cats);
+        if (cats.length > 0) {
+          setSelectedCategory(cats[0].category_id);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadData();
+  }, [repo, type]);
+
+  useEffect(() => {
+    setDisplayLimit(50);
+  }, [selectedCategory, type]);
+
+  useEffect(() => {
+    if (!repo || !selectedCategory) return;
+    const loadStreams = async () => {
+      // Only show loader if data is NOT cached
+      const isCached = (repo as any).isCached?.(type, selectedCategory);
+      if (!isCached) {
+        setLoading(true);
+      }
+      
+      try {
+        let data: Stream[] = [];
+        if (type === 'movie') data = await repo.getVodStreams(selectedCategory);
+        else if (type === 'series') data = await repo.getSeriesStreams(selectedCategory);
+        setStreams(data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadStreams();
+  }, [repo, selectedCategory, type]);
+
+  const filteredStreams = React.useMemo(() => {
+    if (!searchQuery) return streams;
+    const query = searchQuery.toLowerCase();
+    return streams.filter((s) => s.name.toLowerCase().includes(query));
+  }, [streams, searchQuery]);
+
+  const displayedStreams = React.useMemo(() => {
+    return filteredStreams.slice(0, displayLimit);
+  }, [filteredStreams, displayLimit]);
+
+  const handleToggleFavorite = (id: number) => {
+    if (!repo) return;
+    repo.toggleFavorite(id);
+    setFavorites(repo.getFavorites());
+  };
+
+  const handleSelect = (stream: Stream) => {
+    if (!repo) return;
+    if (type === 'series') {
+      setSelectedSeries(stream);
+    } else {
+      repo.addToHistory(stream.stream_id);
+      setSelectedStream(stream);
+    }
+  };
+
+  const handlePlayEpisode = (episode: any) => {
+    if (!repo || !selectedSeries) return;
+    repo.addToHistory(selectedSeries.stream_id);
+    setSelectedEpisode(episode);
+  };
+
+  return (
+    <div className="flex gap-8">
+      {/* Sidebar Categories */}
+      <aside className="w-72 flex-shrink-0 sticky top-24 h-[calc(100vh-8rem)] overflow-y-auto pr-4">
+        <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
+          <Filter className="w-5 h-5 text-blue-500" />
+          Categorias
+        </h2>
+        <div className="space-y-2">
+          {categories.map((cat) => (
+            <button
+              key={cat.category_id}
+              onClick={() => setSelectedCategory(cat.category_id)}
+              className={`w-full text-left px-4 py-3 rounded-xl transition-all duration-200 focus:ring-4 focus:ring-white ${
+                selectedCategory === cat.category_id
+                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20'
+                  : 'text-gray-400 hover:bg-white/5 hover:text-white'
+              }`}
+            >
+              <span className="text-sm font-medium line-clamp-1">{cat.category_name}</span>
+            </button>
+          ))}
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <div className="flex-1 space-y-8">
+        <div className="flex items-center justify-between">
+          <div className="relative w-full max-w-md">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+            <input
+              type="text"
+              placeholder={`Buscar ${type === 'movie' ? 'filmes' : 'séries'}...`}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-white placeholder:text-gray-600 focus:outline-none transition-all"
+            />
+          </div>
+          <div className="text-sm text-gray-500">
+            Mostrando {filteredStreams.length} itens
+          </div>
+        </div>
+
+        {loading ? (
+          <div className="flex flex-col items-center justify-center h-96 gap-4">
+            <Loader2 className="w-12 h-12 text-blue-500 animate-spin" />
+            <p className="text-2xl text-gray-400 font-black">Carregando conteúdo...</p>
+          </div>
+        ) : (
+          <div className="space-y-12">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-8">
+              {displayedStreams.map((stream) => (
+                <motion.div
+                  key={`${stream.stream_type}-${stream.stream_id}`}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <TvMovieCard
+                    stream={stream}
+                    onClick={handleSelect}
+                    isFavorite={favorites.includes(stream.stream_id)}
+                    onToggleFavorite={handleToggleFavorite}
+                  />
+                </motion.div>
+              ))}
+            </div>
+            
+            {filteredStreams.length > displayLimit && (
+              <div className="flex justify-center pt-8 pb-12">
+                <button 
+                  onClick={() => setDisplayLimit(prev => prev + 50)}
+                  className="bg-white/5 hover:bg-white/10 border border-white/10 text-white font-black text-xl px-12 py-5 rounded-2xl transition-all flex items-center gap-3 active:scale-95"
+                >
+                  Carregar Mais ({filteredStreams.length - displayLimit} restantes)
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      <AnimatePresence>
+        {selectedSeries && (
+          <SeriesDetail
+            series={selectedSeries}
+            onClose={() => setSelectedSeries(null)}
+            onPlayEpisode={handlePlayEpisode}
+          />
+        )}
+      </AnimatePresence>
+
+      {selectedStream && repo && (
+        <VideoPlayer
+          url={repo.getStreamUrl(selectedStream.stream_id, type)}
+          title={selectedStream.name}
+          onClose={() => setSelectedStream(null)}
+        />
+      )}
+
+      {selectedEpisode && selectedSeries && repo && (
+        <VideoPlayer
+          url={repo.getStreamUrl(selectedEpisode.id || selectedEpisode.stream_id, 'series', selectedEpisode.container_extension)}
+          title={`${selectedSeries.name} - ${selectedEpisode.title || `Episódio ${selectedEpisode.episode_num}`}`}
+          onClose={() => setSelectedEpisode(null)}
+        />
+      )}
+    </div>
+  );
+};
