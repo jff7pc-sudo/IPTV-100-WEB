@@ -29,9 +29,17 @@ export const LoginScreen: React.FC = () => {
       const api = new XtreamApi(url, username, password);
       const user = await api.authenticate();
       await login(user);
-    } catch (err) {
-      setError('Credenciais ou URL do servidor inválidas. Por favor, tente novamente.');
-      console.error(err);
+    } catch (err: any) {
+      console.error('Login error:', err);
+      if (err.message === 'Network Error' || !err.response) {
+        setError('Erro de conexão. Verifique sua internet ou se a URL do servidor está correta e acessível.');
+      } else if (err.response?.status === 404) {
+        setError('Servidor não encontrado (404). Verifique a URL digitada.');
+      } else if (err.response?.status === 401 || err.response?.status === 403) {
+        setError('Usuário ou senha incorretos (Não autorizado).');
+      } else {
+        setError(`Erro ao conectar: ${err.message || 'Credenciais ou URL inválidas'}`);
+      }
     } finally {
       setLoading(false);
     }

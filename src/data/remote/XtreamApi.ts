@@ -4,6 +4,7 @@
  */
 
 import axios from 'axios';
+import { Capacitor } from '@capacitor/core';
 import { User, Category, Stream, MovieDetail } from '../../domain/model/types';
 
 export class XtreamApi {
@@ -27,7 +28,13 @@ export class XtreamApi {
       params.append('action', action);
     }
     const targetUrl = `${this.baseUrl}/player_api.php?${params.toString()}`;
-    // Use the local proxy to bypass CORS
+    
+    // On native platforms (Android/iOS), call the URL directly.
+    // On web, use the local proxy to bypass CORS.
+    if (Capacitor.isNativePlatform()) {
+      return targetUrl;
+    }
+    
     return `/api/proxy?url=${encodeURIComponent(targetUrl)}`;
   }
 
