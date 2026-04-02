@@ -9,9 +9,9 @@ import { TopNavBar } from '../components/TopNavBar';
 
 export const MainLayout: React.FC = () => {
   return (
-    <div className="h-screen bg-black text-white flex flex-col overflow-hidden">
+    <div className="min-h-screen bg-black text-white flex flex-col">
       <TopNavBar />
-      <main className="flex-1 p-6 max-w-[1920px] mx-auto w-full overflow-y-auto">
+      <main className="flex-1 p-6 max-w-[1920px] mx-auto w-full">
         <Outlet />
       </main>
     </div>
