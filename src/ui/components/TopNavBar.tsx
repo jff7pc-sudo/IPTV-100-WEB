@@ -13,6 +13,7 @@ export const TopNavBar: React.FC = () => {
   const logout = useAppStore((state) => state.logout);
   const refresh = useAppStore((state) => state.refresh);
   const isSyncing = useAppStore((state) => state.isSyncing);
+  const user = useAppStore((state) => state.user);
 
   const navItems = [
     { name: 'Início', path: '/', icon: <Tv className="w-6 h-6" /> },
@@ -24,6 +25,20 @@ export const TopNavBar: React.FC = () => {
 
   return (
     <nav className="h-14 bg-black/90 backdrop-blur-xl border-b border-white/10 flex items-center px-6 z-50 flex-shrink-0">
+      {/* User Info on the left */}
+      <div className="flex items-center gap-4 text-xs text-gray-400">
+        <div className="flex items-center gap-1.5">
+          <span className="w-2 h-2 rounded-full bg-green-500" />
+          <span className="font-bold text-white">{user?.status === 'Active' ? 'Ativa' : user?.status || 'Ativa'}</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <span className="text-gray-500">Expira:</span>
+          <span className="font-bold text-white">
+            {user?.exp_date && user.exp_date !== '0' ? new Date(parseInt(user.exp_date) * 1000).toLocaleDateString('pt-BR') : 'Ilimitado'}
+          </span>
+        </div>
+      </div>
+
       {/* Centered Navigation */}
       <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-3">
         {navItems.map((item) => (

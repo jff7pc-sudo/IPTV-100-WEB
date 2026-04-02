@@ -151,39 +151,6 @@ export const HomeScreen: React.FC = () => {
         )}
       </section>
 
-      {/* Quick Stats */}
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-6 flex items-center gap-6 hover:bg-white/10 transition-all">
-          <div className="w-12 h-12 bg-blue-600/20 rounded-xl flex items-center justify-center text-blue-500">
-            <TrendingUp className="w-6 h-6" />
-          </div>
-          <div>
-            <div className="text-xl font-black text-white">{user?.status === 'Active' ? 'Ativa' : user?.status || 'Ativa'}</div>
-            <div className="text-sm text-gray-500 font-medium">Status da Conta</div>
-          </div>
-        </div>
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-6 flex items-center gap-6 hover:bg-white/10 transition-all">
-          <div className="w-12 h-12 bg-purple-600/20 rounded-xl flex items-center justify-center text-purple-500">
-            <Play className="w-6 h-6" />
-          </div>
-          <div>
-            <div className="text-xl font-black text-white">{user?.max_connections || '1'}</div>
-            <div className="text-sm text-gray-500 font-medium">Conexões Máximas</div>
-          </div>
-        </div>
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-6 flex items-center gap-6 hover:bg-white/10 transition-all">
-          <div className="w-12 h-12 bg-green-600/20 rounded-xl flex items-center justify-center text-green-500">
-            <TrendingUp className="w-6 h-6" />
-          </div>
-          <div>
-            <div className="text-xl font-black text-white">
-              {user?.exp_date && user.exp_date !== '0' ? new Date(parseInt(user.exp_date) * 1000).toLocaleDateString('pt-BR') : 'Ilimitado'}
-            </div>
-            <div className="text-sm text-gray-500 font-medium">Data de Expiração</div>
-          </div>
-        </div>
-      </section>
-
       {/* Featured Movies */}
       <section className="space-y-6">
         <div className="flex items-center justify-between">
