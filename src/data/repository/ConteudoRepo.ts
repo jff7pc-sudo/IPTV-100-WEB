@@ -72,13 +72,11 @@ export class ConteudoRepo {
     await localforage.removeItem('full_cache');
   }
 
-  async sync(onProgress: (progress: number) => void): Promise<void> {
+  async sync(onProgress: (info: { progress: number, movies: number, series: number }) => void): Promise<void> {
     if (!this.xtreamApi) throw new Error('Not authenticated');
     
-    let currentProgress = 0;
-    const updateProgress = (p: number) => {
-      currentProgress = p;
-      onProgress(p);
+    const updateProgress = (p: number, m: number = 0, s: number = 0) => {
+      onProgress({ progress: p, movies: m, series: s });
     };
 
     try {
@@ -100,14 +98,14 @@ export class ConteudoRepo {
       ]);
       
       this.cache.vodStreams['all'] = vodStreams;
-      updateProgress(60);
+      updateProgress(60, vodStreams.length, 0);
       
       this.cache.seriesStreams['all'] = seriesStreams;
-      updateProgress(90);
+      updateProgress(90, vodStreams.length, seriesStreams.length);
 
       // 3. Save to local storage
       await this.saveToLocal();
-      updateProgress(100);
+      updateProgress(100, vodStreams.length, seriesStreams.length);
     } catch (error) {
       console.error('Sync process encountered a critical error', error);
       throw error;

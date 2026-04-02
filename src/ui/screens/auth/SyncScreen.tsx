@@ -41,28 +41,32 @@ export const SyncScreen: React.FC = () => {
             <motion.div 
               className="absolute inset-y-0 left-0 bg-gradient-to-r from-blue-600 to-blue-400 shadow-[0_0_20px_rgba(37,99,235,0.5)]"
               initial={{ width: 0 }}
-              animate={{ width: `${syncProgress}%` }}
+              animate={{ width: `${syncProgress.progress}%` }}
               transition={{ type: 'spring', bounce: 0, duration: 0.5 }}
             />
           </div>
           
           <div className="flex justify-between items-center px-2">
             <div className="flex items-center gap-3 text-blue-500 font-black text-xl">
-              {syncProgress < 100 ? (
+              {syncProgress.progress < 100 ? (
                 <Loader2 className="w-6 h-6 animate-spin" />
               ) : (
                 <CheckCircle2 className="w-6 h-6" />
               )}
-              <span>{syncProgress < 100 ? 'Processando...' : 'Concluído!'}</span>
+              <span>{syncProgress.progress < 100 ? 'Processando...' : 'Concluído!'}</span>
             </div>
-            <span className="text-4xl font-black text-white">{syncProgress}%</span>
+            <span className="text-4xl font-black text-white">{syncProgress.progress}%</span>
           </div>
         </div>
 
         <div className="pt-8 grid grid-cols-3 gap-6 text-sm font-black uppercase tracking-widest text-gray-600">
-          <div className={syncProgress >= 20 ? 'text-blue-500' : ''}>Categorias</div>
-          <div className={syncProgress >= 60 ? 'text-blue-500' : ''}>Filmes</div>
-          <div className={syncProgress >= 90 ? 'text-blue-500' : ''}>Séries</div>
+          <div className={syncProgress.progress >= 20 ? 'text-blue-500' : ''}>Categorias</div>
+          <div className={syncProgress.progress >= 60 ? 'text-blue-500' : ''}>
+            Filmes: {syncProgress.movies}
+          </div>
+          <div className={syncProgress.progress >= 90 ? 'text-blue-500' : ''}>
+            Séries: {syncProgress.series}
+          </div>
         </div>
       </motion.div>
     </div>

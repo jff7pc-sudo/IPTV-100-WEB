@@ -15,7 +15,7 @@ interface AppState {
   isAuthenticated: boolean;
   isInitializing: boolean;
   isSyncing: boolean;
-  syncProgress: number;
+  syncProgress: { progress: number, movies: number, series: number };
   login: (user: User) => Promise<void>;
   logout: () => void;
   refresh: () => Promise<void>;
@@ -28,19 +28,19 @@ export const useAppStore = create<AppState>((set, get) => ({
   isAuthenticated: false,
   isInitializing: true,
   isSyncing: false,
-  syncProgress: 0,
+  syncProgress: { progress: 0, movies: 0, series: 0 },
 
   login: async (user: User) => {
     const repo = new ConteudoRepo(user);
-    set({ user, repo, isAuthenticated: true, isInitializing: false, isSyncing: true, syncProgress: 0 });
+    set({ user, repo, isAuthenticated: true, isInitializing: false, isSyncing: true, syncProgress: { progress: 0, movies: 0, series: 0 } });
     
     if (user.password && user.url !== 'http://demo.iptv') {
       SecurityPrefs.saveCredentials(user.username, user.password, user.url);
     }
 
     try {
-      await repo.sync((progress) => {
-        set({ syncProgress: progress });
+      await repo.sync((info) => {
+        set({ syncProgress: info });
       });
     } catch (error) {
       console.error('Sync failed during login', error);
@@ -58,11 +58,11 @@ export const useAppStore = create<AppState>((set, get) => ({
     const { repo } = get();
     if (!repo) return;
 
-    set({ isSyncing: true, syncProgress: 0 });
+    set({ isSyncing: true, syncProgress: { progress: 0, movies: 0, series: 0 } });
     try {
       await repo.clearCache();
-      await repo.sync((progress) => {
-        set({ syncProgress: progress });
+      await repo.sync((info) => {
+        set({ syncProgress: info });
       });
     } catch (error) {
       console.error('Manual sync failed', error);
@@ -86,10 +86,10 @@ export const useAppStore = create<AppState>((set, get) => ({
 
         // If no local cache, or we want to refresh, we sync
         if (!hasLocalCache) {
-          set({ isSyncing: true, syncProgress: 0 });
+          set({ isSyncing: true, syncProgress: { progress: 0, movies: 0, series: 0 } });
           try {
-            await repo.sync((progress) => {
-              set({ syncProgress: progress });
+            await repo.sync((info) => {
+              set({ syncProgress: info });
             });
           } finally {
             set({ isSyncing: false });

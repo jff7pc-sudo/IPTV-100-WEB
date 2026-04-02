@@ -22,6 +22,8 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ url, title, onClose })
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const [showControls, setShowControls] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
   const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -147,9 +149,29 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ url, title, onClose })
         ref={videoRef}
         className="w-full h-full object-contain"
         onTimeUpdate={handleTimeUpdate}
-        onLoadedMetadata={handleLoadedMetadata}
+        onLoadedMetadata={(e) => {
+          handleLoadedMetadata(e);
+          setLoading(false);
+        }}
         onClick={togglePlay}
+        onError={(e) => {
+          console.error("Video error:", e);
+          setError("Erro ao carregar o vídeo. Tente novamente mais tarde.");
+          setLoading(false);
+        }}
       />
+      
+      {loading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+          <Loader2 className="w-12 h-12 text-blue-500 animate-spin" />
+        </div>
+      )}
+      
+      {error && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black/80 text-white p-4 text-center">
+          <p className="text-xl font-bold">{error}</p>
+        </div>
+      )}
 
       <AnimatePresence>
         {showControls && (
