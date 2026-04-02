@@ -23,23 +23,23 @@ export const TopNavBar: React.FC = () => {
   ];
 
   return (
-    <nav className="fixed top-0 left-0 right-0 h-20 bg-black/90 backdrop-blur-xl border-b border-white/10 flex items-center px-12 z-50">
+    <nav className="h-14 bg-black/90 backdrop-blur-xl border-b border-white/10 flex items-center px-6 z-50 flex-shrink-0">
       {/* Centered Navigation */}
-      <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-6">
+      <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-3">
         {navItems.map((item) => (
           <NavLink
             key={item.name}
             to={item.path}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-6 py-3 rounded-xl transition-all duration-300 focus:ring-4 focus:ring-white ${
+              `flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all duration-300 focus:ring-4 focus:ring-white ${
                 isActive 
                   ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/40' 
                   : 'text-gray-400 hover:text-white hover:bg-white/10'
               }`
             }
           >
-            {item.icon}
-            <span className="text-lg font-semibold">{item.name}</span>
+            {React.cloneElement(item.icon as React.ReactElement, { className: 'w-4 h-4' })}
+            <span className="text-sm font-semibold">{item.name}</span>
           </NavLink>
         ))}
       </div>
@@ -49,19 +49,19 @@ export const TopNavBar: React.FC = () => {
         <button
           onClick={refresh}
           disabled={isSyncing}
-          className="flex items-center gap-2 px-4 py-2 text-gray-400 hover:text-blue-500 hover:bg-blue-500/10 rounded-lg transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-blue-500 disabled:opacity-50"
+          className="flex items-center gap-2 px-3 py-1.5 text-gray-400 hover:text-blue-500 hover:bg-blue-500/10 rounded-lg transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-blue-500 disabled:opacity-50"
           title="Atualizar Conteúdo"
         >
-          <RefreshCw className={`w-5 h-5 ${isSyncing ? 'animate-spin' : ''}`} />
-          <span className="text-base font-bold">Atualizar</span>
+          <RefreshCw className={`w-4 h-4 ${isSyncing ? 'animate-spin' : ''}`} />
+          <span className="text-sm font-bold">Atualizar</span>
         </button>
 
         <button
           onClick={logout}
-          className="flex items-center gap-2 px-4 py-2 text-gray-400 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-red-500"
+          className="flex items-center gap-2 px-3 py-1.5 text-gray-400 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-red-500"
         >
-          <LogOut className="w-5 h-5" />
-          <span className="text-base font-bold">Sair</span>
+          <LogOut className="w-4 h-4" />
+          <span className="text-sm font-bold">Sair</span>
         </button>
       </div>
     </nav>

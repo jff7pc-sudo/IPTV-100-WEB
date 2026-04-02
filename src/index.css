@@ -5,8 +5,12 @@
 }
 
 @layer base {
+  html {
+    font-size: 14px; /* Base font size for TV to avoid things being too large */
+  }
+  
   body {
-    @apply bg-black text-white antialiased overflow-y-auto;
+    @apply bg-black text-white antialiased overflow-hidden;
   }
 
   /* Hide scrollbar for Chrome, Safari and Opera */
@@ -18,10 +22,11 @@
   * {
     -ms-overflow-style: none !important;  /* IE and Edge */
     scrollbar-width: none !important;  /* Firefox */
+    outline: none !important; /* Remove default browser outline */
   }
 
   :focus {
-    @apply outline-none ring-8 ring-blue-600 ring-offset-4 ring-offset-black z-50 scale-105 transition-all duration-300;
+    @apply outline-none ring-4 ring-blue-600 ring-offset-2 ring-offset-black z-50 scale-105 transition-all duration-200;
   }
 }
 

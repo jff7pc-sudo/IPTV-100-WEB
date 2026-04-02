@@ -67,6 +67,10 @@ export const SeriesDetail: React.FC<SeriesDetailProps> = ({ series, onClose, onP
                 alt={series.name}
                 className="w-full aspect-[2/3] object-cover rounded-2xl shadow-2xl"
                 referrerPolicy="no-referrer"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = `https://picsum.photos/seed/${series.stream_id}/400/600`;
+                }}
               />
               <div className="space-y-4">
                 <h2 className="text-4xl font-black text-white leading-tight">{series.name}</h2>

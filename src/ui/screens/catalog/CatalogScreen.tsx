@@ -113,19 +113,19 @@ export const CatalogScreen: React.FC<CatalogScreenProps> = ({ type }) => {
   };
 
   return (
-    <div className="flex gap-8">
+    <div className="flex gap-6">
       {/* Sidebar Categories */}
-      <aside className="w-72 flex-shrink-0 sticky top-24 h-[calc(100vh-8rem)] overflow-y-auto pr-4">
-        <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-          <Filter className="w-5 h-5 text-blue-500" />
+      <aside className="w-64 flex-shrink-0 h-[calc(100vh-6rem)] overflow-y-auto pr-2">
+        <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+          <Filter className="w-4 h-4 text-blue-500" />
           Categorias
         </h2>
-        <div className="space-y-2">
+        <div className="space-y-1">
           {categories.map((cat) => (
             <button
               key={cat.category_id}
               onClick={() => setSelectedCategory(cat.category_id)}
-              className={`w-full text-left px-4 py-3 rounded-xl transition-all duration-200 focus:ring-4 focus:ring-white ${
+              className={`w-full text-left px-3 py-2 rounded-lg transition-all duration-200 focus:ring-4 focus:ring-white ${
                 selectedCategory === cat.category_id
                   ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20'
                   : 'text-gray-400 hover:bg-white/5 hover:text-white'
@@ -138,55 +138,49 @@ export const CatalogScreen: React.FC<CatalogScreenProps> = ({ type }) => {
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1 space-y-8">
+      <div className="flex-1 space-y-6">
         <div className="flex items-center justify-between">
-          <div className="relative w-full max-w-md">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+          <div className="relative w-full max-w-sm">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
             <input
               type="text"
               placeholder={`Buscar ${type === 'movie' ? 'filmes' : 'séries'}...`}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-white placeholder:text-gray-600 focus:outline-none transition-all"
+              className="w-full bg-white/5 border border-white/10 rounded-xl py-2 pl-10 pr-4 text-sm text-white placeholder:text-gray-600 focus:outline-none transition-all"
             />
           </div>
-          <div className="text-sm text-gray-500">
-            Mostrando {filteredStreams.length} itens
+          <div className="text-xs text-gray-500">
+            {filteredStreams.length} itens
           </div>
         </div>
 
         {loading ? (
-          <div className="flex flex-col items-center justify-center h-96 gap-4">
-            <Loader2 className="w-12 h-12 text-blue-500 animate-spin" />
-            <p className="text-2xl text-gray-400 font-black">Carregando conteúdo...</p>
+          <div className="flex flex-col items-center justify-center h-64 gap-4">
+            <Loader2 className="w-10 h-10 text-blue-500 animate-spin" />
+            <p className="text-xl text-gray-400 font-black">Carregando...</p>
           </div>
         ) : (
-          <div className="space-y-12">
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-8">
+          <div className="space-y-8">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-4">
               {displayedStreams.map((stream) => (
-                <motion.div
+                <TvMovieCard
                   key={`${stream.stream_type}-${stream.stream_id}`}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <TvMovieCard
-                    stream={stream}
-                    onClick={handleSelect}
-                    isFavorite={favorites.includes(stream.stream_id)}
-                    onToggleFavorite={handleToggleFavorite}
-                  />
-                </motion.div>
+                  stream={stream}
+                  onClick={handleSelect}
+                  isFavorite={favorites.includes(stream.stream_id)}
+                  onToggleFavorite={handleToggleFavorite}
+                />
               ))}
             </div>
             
             {filteredStreams.length > displayLimit && (
-              <div className="flex justify-center pt-8 pb-12">
+              <div className="flex justify-center pt-4 pb-8">
                 <button 
                   onClick={() => setDisplayLimit(prev => prev + 50)}
-                  className="bg-white/5 hover:bg-white/10 border border-white/10 text-white font-black text-xl px-12 py-5 rounded-2xl transition-all flex items-center gap-3 active:scale-95"
+                  className="bg-white/5 hover:bg-white/10 border border-white/10 text-white font-black text-lg px-8 py-3 rounded-xl transition-all flex items-center gap-3 active:scale-95"
                 >
-                  Carregar Mais ({filteredStreams.length - displayLimit} restantes)
+                  Carregar Mais
                 </button>
               </div>
             )}

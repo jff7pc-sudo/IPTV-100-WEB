@@ -32,6 +32,10 @@ export const TvMovieCard = React.memo<TvMovieCardProps>(({ stream, onClick, isFa
         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         referrerPolicy="no-referrer"
         loading="lazy"
+        onError={(e) => {
+          const target = e.target as HTMLImageElement;
+          target.src = `https://picsum.photos/seed/${stream.stream_id}/300/450`;
+        }}
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
         <h3 className="text-xl font-black text-white line-clamp-2 mb-4 leading-tight">{stream.name}</h3>
