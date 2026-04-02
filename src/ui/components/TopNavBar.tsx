@@ -46,7 +46,7 @@ export const TopNavBar: React.FC = () => {
             key={item.name}
             to={item.path}
             className={({ isActive }) =>
-              `flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all duration-300 focus:ring-4 focus:ring-white ${
+              `flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all duration-300 focus:ring-4 focus:ring-white outline-none ${
                 isActive 
                   ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/40' 
                   : 'text-gray-400 hover:text-white hover:bg-white/10'

@@ -134,6 +134,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ url, title, onClose })
   const handleLoadedMetadata = () => {
     if (videoRef.current) {
       setDuration(videoRef.current.duration);
+      setLoading(false);
     }
   };
 
@@ -149,10 +150,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ url, title, onClose })
         ref={videoRef}
         className="w-full h-full object-contain"
         onTimeUpdate={handleTimeUpdate}
-        onLoadedMetadata={(e) => {
-          handleLoadedMetadata(e);
-          setLoading(false);
-        }}
+        onLoadedMetadata={handleLoadedMetadata}
         onClick={togglePlay}
         onError={(e) => {
           console.error("Video error:", e);

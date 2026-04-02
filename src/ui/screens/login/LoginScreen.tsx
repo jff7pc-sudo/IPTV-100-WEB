@@ -92,6 +92,7 @@ export const LoginScreen: React.FC = () => {
                 placeholder="http://exemplo.com:8080"
                 className="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-12 pr-4 text-base text-white placeholder:text-gray-600 focus:outline-none focus:ring-4 focus:ring-blue-500 transition-all"
                 required
+                autoFocus
               />
             </div>
           </div>
