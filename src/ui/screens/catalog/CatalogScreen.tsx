@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useAppStore } from '../../../di/AppModule';
 import { Category, Stream } from '../../../domain/model/types';
 import { TvMovieCard } from '../../components/TvMovieCard';
@@ -28,7 +28,29 @@ export const CatalogScreen: React.FC<CatalogScreenProps> = ({ type }) => {
   const [selectedEpisode, setSelectedEpisode] = useState<any>(null);
   const [favorites, setFavorites] = useState<number[]>([]);
 
-  const [displayLimit, setDisplayLimit] = useState(50);
+  const [displayLimit, setDisplayLimit] = useState(25);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  const loadMore = useCallback(() => {
+    setDisplayLimit(prev => {
+      if (prev >= filteredStreams.length) return prev;
+      return prev + 25;
+    });
+  }, [filteredStreams.length]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        loadMore();
+      }
+    }, { threshold: 0.1 });
+
+    if (sentinelRef.current) {
+      observer.observe(sentinelRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [loadMore]);
 
   useEffect(() => {
     if (!repo) return;
@@ -54,7 +76,7 @@ export const CatalogScreen: React.FC<CatalogScreenProps> = ({ type }) => {
   }, [repo, type]);
 
   useEffect(() => {
-    setDisplayLimit(50);
+    setDisplayLimit(25);
   }, [selectedCategory, type]);
 
   useEffect(() => {
@@ -173,17 +195,7 @@ export const CatalogScreen: React.FC<CatalogScreenProps> = ({ type }) => {
                 />
               ))}
             </div>
-            
-            {filteredStreams.length > displayLimit && (
-              <div className="flex justify-center pt-4 pb-8">
-                <button 
-                  onClick={() => setDisplayLimit(prev => prev + 50)}
-                  className="bg-white/5 hover:bg-white/10 border border-white/10 text-white font-black text-lg px-10 py-4 rounded-xl transition-all flex items-center gap-3 active:scale-95 outline-none focus:ring-4 focus:ring-blue-500"
-                >
-                  Carregar Mais
-                </button>
-              </div>
-            )}
+            <div ref={sentinelRef} className="h-10" />
           </div>
         )}
       </div>

@@ -218,10 +218,7 @@ export class XtreamApi {
     if (this.baseUrl === 'http://demo.iptv') {
       return 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8'; // Sample HLS stream
     }
-    let ext = extension || 'm3u8';
-    if (type === 'movie' || type === 'series') {
-      ext = extension || 'mp4';
-    }
+    const ext = extension || 'm3u8';
     return `${this.baseUrl}/${type}/${this.username}/${this.password}/${streamId}.${ext}`;
   }
 }

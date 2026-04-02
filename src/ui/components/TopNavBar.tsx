@@ -28,8 +28,8 @@ export const TopNavBar: React.FC = () => {
       {/* User Info on the left */}
       <div className="flex items-center gap-4 text-xs text-gray-400">
         <div className="flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full bg-green-500" />
-          <span className="font-bold text-white">{user?.status === 'Active' ? 'Ativa' : user?.status || 'Ativa'}</span>
+          <span className="w-2 h-2 rounded-full bg-blue-500" />
+          <span className="font-bold text-white">{user?.active_cons || '0'} / {user?.max_connections || '0'}</span>
         </div>
         <div className="flex items-center gap-1.5">
           <span className="text-gray-500">Expira:</span>

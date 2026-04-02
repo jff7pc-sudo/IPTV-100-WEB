@@ -40,11 +40,22 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ url, title, onClose })
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
         video.play().catch(console.error);
       });
+      hls.on(Hls.Events.ERROR, (event, data) => {
+        if (data.fatal) {
+          console.error("HLS error fatal, falling back", data);
+          hls?.destroy();
+          video.src = url;
+          video.play().catch(console.error);
+        }
+      });
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
       video.src = url;
       video.addEventListener('loadedmetadata', () => {
         video.play().catch(console.error);
       });
+    } else {
+      video.src = url;
+      video.play().catch(console.error);
     }
 
     return () => {

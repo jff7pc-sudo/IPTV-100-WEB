@@ -48,6 +48,18 @@ export const HistoryScreen: React.FC = () => {
         <History className="w-8 h-8 text-purple-500" />
         Continuar Assistindo
       </h1>
+      
+      {streams.length > 0 && (
+        <button
+          onClick={() => {
+            repo?.clearHistory();
+            setStreams([]);
+          }}
+          className="bg-red-600 hover:bg-red-500 text-white font-bold py-2 px-4 rounded-lg transition-all"
+        >
+          Limpar Histórico
+        </button>
+      )}
 
       {loading ? (
         <div className="flex flex-col items-center justify-center h-64 gap-4">
