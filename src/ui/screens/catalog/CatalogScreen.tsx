@@ -23,6 +23,7 @@ export const CatalogScreen: React.FC<CatalogScreenProps> = ({ type }) => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedStream, setSelectedStream] = useState<Stream | null>(null);
   const [selectedSeries, setSelectedSeries] = useState<Stream | null>(null);
   const [selectedEpisode, setSelectedEpisode] = useState<any>(null);
@@ -65,9 +66,12 @@ export const CatalogScreen: React.FC<CatalogScreenProps> = ({ type }) => {
         setCategories(cats);
         if (cats.length > 0) {
           setSelectedCategory(cats[0].category_id);
+        } else {
+          setError('Nenhuma categoria encontrada.');
         }
       } catch (err) {
         console.error(err);
+        setError('Erro ao carregar categorias.');
       } finally {
         setLoading(false);
       }
@@ -95,6 +99,7 @@ export const CatalogScreen: React.FC<CatalogScreenProps> = ({ type }) => {
         setStreams(data);
       } catch (err) {
         console.error(err);
+        setError('Erro ao carregar lista de conteúdos.');
       } finally {
         setLoading(false);
       }
@@ -181,6 +186,16 @@ export const CatalogScreen: React.FC<CatalogScreenProps> = ({ type }) => {
           <div className="flex flex-col items-center justify-center h-64 gap-4">
             <Loader2 className="w-10 h-10 text-blue-500 animate-spin" />
             <p className="text-xl text-gray-400 font-black">Carregando...</p>
+          </div>
+        ) : error ? (
+          <div className="flex flex-col items-center justify-center h-64 gap-4 text-red-500">
+            <p className="text-xl font-black">{error}</p>
+            <button 
+              onClick={() => window.location.reload()}
+              className="bg-red-600 text-white px-6 py-2 rounded-lg font-bold"
+            >
+              Tentar novamente
+            </button>
           </div>
         ) : (
           <div className="space-y-8">
