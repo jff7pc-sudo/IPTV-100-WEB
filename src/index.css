@@ -6,11 +6,13 @@
 
 @layer base {
   html {
-    font-size: 14px; /* Base font size for TV to avoid things being too large */
+    font-size: 14px; /* Optimized base font for 1920x1080 TV */
   }
   
   body {
     @apply bg-black text-white antialiased overflow-hidden;
+    width: 100vw;
+    height: 100vh;
   }
 
   /* Hide scrollbar for Chrome, Safari and Opera */

@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import axios from 'axios';
 import { Capacitor } from '@capacitor/core';
 import { User, Category, Stream, MovieDetail } from '../../domain/model/types';
 
@@ -38,11 +37,31 @@ export class XtreamApi {
     return `/api/proxy?url=${encodeURIComponent(targetUrl)}`;
   }
 
+  private async fetchWithTimeout(url: string, options: RequestInit = {}, timeout = 15000) {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), timeout);
+    try {
+      const response = await fetch(url, {
+        ...options,
+        signal: controller.signal
+      });
+      clearTimeout(id);
+      return response;
+    } catch (error) {
+      clearTimeout(id);
+      throw error;
+    }
+  }
+
   async authenticate(): Promise<User> {
-    const response = await axios.get(this.getUrl());
-    if (response.data.user_info) {
+    const response = await this.fetchWithTimeout(this.getUrl());
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    if (data.user_info) {
       return {
-        ...response.data.user_info,
+        ...data.user_info,
         url: this.baseUrl,
         username: this.username,
         password: this.password
@@ -58,8 +77,9 @@ export class XtreamApi {
         { category_id: '2', category_name: 'Comedy', parent_id: 0 },
       ];
     }
-    const response = await axios.get(this.getUrl('get_vod_categories'));
-    return response.data;
+    const response = await this.fetchWithTimeout(this.getUrl('get_vod_categories'));
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    return await response.json();
   }
 
   async getVodStreams(categoryId?: string): Promise<Stream[]> {
@@ -81,8 +101,10 @@ export class XtreamApi {
     }
     const params: Record<string, string | number> = {};
     if (categoryId) params.category_id = categoryId;
-    const response = await axios.get(this.getUrl('get_vod_streams', params));
-    const streams = Array.isArray(response.data) ? response.data : [];
+    const response = await this.fetchWithTimeout(this.getUrl('get_vod_streams', params));
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    const data = await response.json();
+    const streams = Array.isArray(data) ? data : [];
     return streams.map((s: any, index: number) => ({
       ...s,
       stream_id: s.stream_id || s.vod_id || s.id || `fallback-${index}`,
@@ -96,8 +118,9 @@ export class XtreamApi {
         { category_id: '1', category_name: 'Drama', parent_id: 0 },
       ];
     }
-    const response = await axios.get(this.getUrl('get_series_categories'));
-    return response.data;
+    const response = await this.fetchWithTimeout(this.getUrl('get_series_categories'));
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    return await response.json();
   }
 
   async getSeriesStreams(categoryId?: string): Promise<Stream[]> {
@@ -119,8 +142,10 @@ export class XtreamApi {
     }
     const params: Record<string, string | number> = {};
     if (categoryId) params.category_id = categoryId;
-    const response = await axios.get(this.getUrl('get_series', params));
-    const series = Array.isArray(response.data) ? response.data : [];
+    const response = await this.fetchWithTimeout(this.getUrl('get_series', params));
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    const data = await response.json();
+    const series = Array.isArray(data) ? data : [];
     return series.map((s: any, index: number) => ({
       ...s,
       stream_id: s.series_id || s.stream_id || s.id || `fallback-${index}`,
@@ -158,8 +183,9 @@ export class XtreamApi {
         }
       };
     }
-    const response = await axios.get(this.getUrl('get_vod_info', { vod_id: streamId }));
-    return response.data;
+    const response = await this.fetchWithTimeout(this.getUrl('get_vod_info', { vod_id: streamId }));
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    return await response.json();
   }
 
   async getSeriesInfo(seriesId: number): Promise<any> {
@@ -183,8 +209,9 @@ export class XtreamApi {
         }
       };
     }
-    const response = await axios.get(this.getUrl('get_series_info', { series_id: seriesId }));
-    return response.data;
+    const response = await this.fetchWithTimeout(this.getUrl('get_series_info', { series_id: seriesId }));
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    return await response.json();
   }
 
   getStreamUrl(streamId: number, type: 'live' | 'movie' | 'series' = 'live', extension?: string): string {

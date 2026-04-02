@@ -63,6 +63,15 @@ export class ConteudoRepo {
     }
   }
 
+  async clearCache(): Promise<void> {
+    this.cache = {
+      vodStreams: {},
+      seriesStreams: {},
+      seriesInfo: {},
+    };
+    await localforage.removeItem('full_cache');
+  }
+
   async sync(onProgress: (progress: number) => void): Promise<void> {
     if (!this.xtreamApi) throw new Error('Not authenticated');
     
@@ -72,32 +81,37 @@ export class ConteudoRepo {
       onProgress(p);
     };
 
-    updateProgress(5);
-    // 1. Get Categories
-    const [vodCats, seriesCats] = await Promise.all([
-      this.xtreamApi.getVodCategories(),
-      this.xtreamApi.getSeriesCategories()
-    ]);
-    this.cache.vodCategories = vodCats;
-    this.cache.seriesCategories = seriesCats;
-    updateProgress(20);
+    try {
+      updateProgress(5);
+      // 1. Get Categories
+      const [vodCats, seriesCats] = await Promise.all([
+        this.xtreamApi.getVodCategories().catch(e => { console.error('VOD Cats failed', e); return []; }),
+        this.xtreamApi.getSeriesCategories().catch(e => { console.error('Series Cats failed', e); return []; })
+      ]);
+      
+      this.cache.vodCategories = vodCats;
+      this.cache.seriesCategories = seriesCats;
+      updateProgress(20);
 
-    // 2. Get All Streams (this is the heavy part)
-    // We'll fetch 'all' for both movies and series
-    const [vodStreams, seriesStreams] = await Promise.all([
-      this.xtreamApi.getVodStreams(),
-      this.xtreamApi.getSeriesStreams()
-    ]);
-    
-    this.cache.vodStreams['all'] = vodStreams;
-    updateProgress(60);
-    
-    this.cache.seriesStreams['all'] = seriesStreams;
-    updateProgress(90);
+      // 2. Get All Streams (this is the heavy part)
+      const [vodStreams, seriesStreams] = await Promise.all([
+        this.xtreamApi.getVodStreams().catch(e => { console.error('VOD Streams failed', e); return []; }),
+        this.xtreamApi.getSeriesStreams().catch(e => { console.error('Series Streams failed', e); return []; })
+      ]);
+      
+      this.cache.vodStreams['all'] = vodStreams;
+      updateProgress(60);
+      
+      this.cache.seriesStreams['all'] = seriesStreams;
+      updateProgress(90);
 
-    // 3. Save to local storage
-    await this.saveToLocal();
-    updateProgress(100);
+      // 3. Save to local storage
+      await this.saveToLocal();
+      updateProgress(100);
+    } catch (error) {
+      console.error('Sync process encountered a critical error', error);
+      throw error;
+    }
   }
 
   async getVodCategories(): Promise<Category[]> {

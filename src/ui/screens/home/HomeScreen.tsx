@@ -106,9 +106,9 @@ export const HomeScreen: React.FC = () => {
   };
 
   return (
-    <div className="space-y-16">
+    <div className="space-y-10">
       {/* Hero Banner */}
-      <section className="relative h-[70vh] rounded-[3rem] overflow-hidden group shadow-2xl">
+      <section className="relative h-[55vh] rounded-[2rem] overflow-hidden group shadow-2xl">
         {heroItem ? (
           <>
             <img
@@ -117,27 +117,27 @@ export const HomeScreen: React.FC = () => {
               className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
               referrerPolicy="no-referrer"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent flex flex-col justify-center px-24">
+            <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent flex flex-col justify-center px-16">
               <motion.div
                 initial={{ opacity: 0, x: -40 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3, duration: 0.8 }}
-                className="max-w-4xl space-y-8"
+                className="max-w-3xl space-y-4"
               >
-                <div className="flex items-center gap-3 text-blue-500 font-black tracking-[0.2em] uppercase text-lg">
-                  <TrendingUp className="w-6 h-6" />
-                  Recomendado para Você
+                <div className="flex items-center gap-2 text-blue-500 font-black tracking-widest uppercase text-sm">
+                  <TrendingUp className="w-4 h-4" />
+                  Recomendado
                 </div>
-                <h1 className="text-8xl font-black text-white leading-none tracking-tighter">{heroItem.name}</h1>
-                <p className="text-2xl text-gray-300 line-clamp-3 max-w-2xl leading-relaxed">
+                <h1 className="text-5xl font-black text-white leading-none tracking-tighter">{heroItem.name}</h1>
+                <p className="text-lg text-gray-300 line-clamp-2 max-w-xl leading-relaxed">
                   Assista agora a este conteúdo em destaque. Milhares de canais, filmes e séries em alta definição com a melhor qualidade de streaming.
                 </p>
-                <div className="flex items-center gap-6 pt-6">
+                <div className="flex items-center gap-4 pt-4">
                   <button
                     onClick={() => handleSelect(heroItem)}
-                    className="bg-blue-600 hover:bg-blue-500 text-white font-black text-2xl px-12 py-6 rounded-2xl transition-all flex items-center gap-4 shadow-2xl shadow-blue-600/40 active:scale-95 focus:ring-8 focus:ring-white"
+                    className="bg-blue-600 hover:bg-blue-500 text-white font-black text-lg px-8 py-4 rounded-xl transition-all flex items-center gap-3 shadow-2xl shadow-blue-600/40 active:scale-95 focus:ring-8 focus:ring-white"
                   >
-                    <Play className="w-8 h-8 fill-current" />
+                    <Play className="w-6 h-6 fill-current" />
                     Assistir Agora
                   </button>
                 </div>
@@ -146,77 +146,89 @@ export const HomeScreen: React.FC = () => {
           </>
         ) : (
           <div className="w-full h-full bg-white/5 animate-pulse flex items-center justify-center">
-            <Loader2 className="w-12 h-12 text-blue-500 animate-spin" />
+            <Loader2 className="w-10 h-10 text-blue-500 animate-spin" />
           </div>
         )}
       </section>
 
       {/* Quick Stats */}
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div className="bg-white/5 border border-white/10 rounded-[2rem] p-10 flex items-center gap-8 hover:bg-white/10 transition-all">
-          <div className="w-16 h-16 bg-blue-600/20 rounded-2xl flex items-center justify-center text-blue-500">
-            <TrendingUp className="w-8 h-8" />
+      <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-6 flex items-center gap-6 hover:bg-white/10 transition-all">
+          <div className="w-12 h-12 bg-blue-600/20 rounded-xl flex items-center justify-center text-blue-500">
+            <TrendingUp className="w-6 h-6" />
           </div>
           <div>
-            <div className="text-3xl font-black text-white">{user?.status === 'Active' ? 'Ativa' : user?.status || 'Ativa'}</div>
-            <div className="text-lg text-gray-500 font-medium">Status da Conta</div>
+            <div className="text-xl font-black text-white">{user?.status === 'Active' ? 'Ativa' : user?.status || 'Ativa'}</div>
+            <div className="text-sm text-gray-500 font-medium">Status da Conta</div>
           </div>
         </div>
-        <div className="bg-white/5 border border-white/10 rounded-[2rem] p-10 flex items-center gap-8 hover:bg-white/10 transition-all">
-          <div className="w-16 h-16 bg-purple-600/20 rounded-2xl flex items-center justify-center text-purple-500">
-            <Play className="w-8 h-8" />
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-6 flex items-center gap-6 hover:bg-white/10 transition-all">
+          <div className="w-12 h-12 bg-purple-600/20 rounded-xl flex items-center justify-center text-purple-500">
+            <Play className="w-6 h-6" />
           </div>
           <div>
-            <div className="text-3xl font-black text-white">{user?.max_connections || '1'}</div>
-            <div className="text-lg text-gray-500 font-medium">Conexões Máximas</div>
+            <div className="text-xl font-black text-white">{user?.max_connections || '1'}</div>
+            <div className="text-sm text-gray-500 font-medium">Conexões Máximas</div>
           </div>
         </div>
-        <div className="bg-white/5 border border-white/10 rounded-[2rem] p-10 flex items-center gap-8 hover:bg-white/10 transition-all">
-          <div className="w-16 h-16 bg-green-600/20 rounded-2xl flex items-center justify-center text-green-500">
-            <TrendingUp className="w-8 h-8" />
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-6 flex items-center gap-6 hover:bg-white/10 transition-all">
+          <div className="w-12 h-12 bg-green-600/20 rounded-xl flex items-center justify-center text-green-500">
+            <TrendingUp className="w-6 h-6" />
           </div>
           <div>
-            <div className="text-3xl font-black text-white">
+            <div className="text-xl font-black text-white">
               {user?.exp_date && user.exp_date !== '0' ? new Date(parseInt(user.exp_date) * 1000).toLocaleDateString('pt-BR') : 'Ilimitado'}
             </div>
-            <div className="text-lg text-gray-500 font-medium">Data de Expiração</div>
+            <div className="text-sm text-gray-500 font-medium">Data de Expiração</div>
           </div>
         </div>
       </section>
 
       {/* Featured Movies */}
-      <section className="space-y-8">
+      <section className="space-y-6">
         <div className="flex items-center justify-between">
-          <h2 className="text-4xl font-black flex items-center gap-4">
-            <TrendingUp className="w-10 h-10 text-blue-500" />
+          <h2 className="text-2xl font-black flex items-center gap-3">
+            <TrendingUp className="w-8 h-8 text-blue-500" />
             Filmes em Destaque
           </h2>
-          <Link to="/movies" className="text-blue-500 hover:text-blue-400 text-xl font-bold flex items-center gap-2">
-            Ver Todos <ChevronRight className="w-6 h-6" />
+          <Link to="/movies" className="text-blue-500 hover:text-blue-400 text-lg font-bold flex items-center gap-2 focus:ring-4 focus:ring-blue-500 rounded-lg px-2">
+            Ver Todos <ChevronRight className="w-5 h-5" />
           </Link>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-8">
-          {featuredMovies.map((stream) => (
-            <TvMovieCard key={`${stream.stream_type}-${stream.stream_id}`} stream={stream} onClick={handleSelect} />
-          ))}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
+          {featuredMovies.length > 0 ? (
+            featuredMovies.map((stream) => (
+              <TvMovieCard key={`${stream.stream_type}-${stream.stream_id}`} stream={stream} onClick={handleSelect} />
+            ))
+          ) : (
+            Array.from({ length: 8 }).map((_, i) => (
+              <div key={`skeleton-m-${i}`} className="aspect-[2/3] bg-white/5 rounded-xl animate-pulse" />
+            ))
+          )}
         </div>
       </section>
 
       {/* Featured Series */}
-      <section className="space-y-8">
+      <section className="space-y-6">
         <div className="flex items-center justify-between">
-          <h2 className="text-4xl font-black flex items-center gap-4">
-            <TrendingUp className="w-10 h-10 text-purple-500" />
+          <h2 className="text-2xl font-black flex items-center gap-3">
+            <TrendingUp className="w-8 h-8 text-purple-500" />
             Séries em Destaque
           </h2>
-          <Link to="/series" className="text-blue-500 hover:text-blue-400 text-xl font-bold flex items-center gap-2">
-            Ver Todas <ChevronRight className="w-6 h-6" />
+          <Link to="/series" className="text-blue-500 hover:text-blue-400 text-lg font-bold flex items-center gap-2 focus:ring-4 focus:ring-blue-500 rounded-lg px-2">
+            Ver Todas <ChevronRight className="w-5 h-5" />
           </Link>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-8">
-          {featuredSeries.map((stream) => (
-            <TvMovieCard key={`${stream.stream_type}-${stream.stream_id}`} stream={stream} onClick={handleSelect} />
-          ))}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
+          {featuredSeries.length > 0 ? (
+            featuredSeries.map((stream) => (
+              <TvMovieCard key={`${stream.stream_type}-${stream.stream_id}`} stream={stream} onClick={handleSelect} />
+            ))
+          ) : (
+            Array.from({ length: 8 }).map((_, i) => (
+              <div key={`skeleton-s-${i}`} className="aspect-[2/3] bg-white/5 rounded-xl animate-pulse" />
+            ))
+          )}
         </div>
       </section>
 
@@ -232,7 +244,7 @@ export const HomeScreen: React.FC = () => {
               Ver Todos <ChevronRight className="w-4 h-4" />
             </Link>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
             {favorites.map((stream) => (
               <TvMovieCard key={`${stream.stream_type}-${stream.stream_id}`} stream={stream} onClick={handleSelect} />
             ))}
@@ -248,11 +260,11 @@ export const HomeScreen: React.FC = () => {
               <History className="w-6 h-6 text-purple-500" />
               Continuar Assistindo
             </h2>
-            <Link to="/history" className="text-blue-500 hover:text-blue-400 font-medium flex items-center gap-1">
+            <Link to="/history" className="text-blue-500 hover:text-blue-400 font-medium flex items-center gap-1 focus:ring-4 focus:ring-blue-500 rounded-lg px-2">
               Ver Tudo <ChevronRight className="w-4 h-4" />
             </Link>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
             {history.map((stream) => (
               <TvMovieCard key={`${stream.stream_type}-${stream.stream_id}`} stream={stream} onClick={handleSelect} />
             ))}

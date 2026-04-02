@@ -120,18 +120,18 @@ export const CatalogScreen: React.FC<CatalogScreenProps> = ({ type }) => {
           <Filter className="w-4 h-4 text-blue-500" />
           Categorias
         </h2>
-        <div className="space-y-1">
+        <div className="space-y-2">
           {categories.map((cat) => (
             <button
               key={cat.category_id}
               onClick={() => setSelectedCategory(cat.category_id)}
-              className={`w-full text-left px-3 py-2 rounded-lg transition-all duration-200 focus:ring-4 focus:ring-white ${
+              className={`w-full text-left px-4 py-3 rounded-xl transition-all duration-200 outline-none focus:ring-4 focus:ring-white ${
                 selectedCategory === cat.category_id
                   ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20'
                   : 'text-gray-400 hover:bg-white/5 hover:text-white'
               }`}
             >
-              <span className="text-sm font-medium line-clamp-1">{cat.category_name}</span>
+              <span className="text-base font-black line-clamp-1">{cat.category_name}</span>
             </button>
           ))}
         </div>
@@ -147,7 +147,7 @@ export const CatalogScreen: React.FC<CatalogScreenProps> = ({ type }) => {
               placeholder={`Buscar ${type === 'movie' ? 'filmes' : 'séries'}...`}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-xl py-2 pl-10 pr-4 text-sm text-white placeholder:text-gray-600 focus:outline-none transition-all"
+              className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-12 pr-4 text-base text-white placeholder:text-gray-600 focus:outline-none focus:ring-4 focus:ring-blue-500 transition-all"
             />
           </div>
           <div className="text-xs text-gray-500">
@@ -162,7 +162,7 @@ export const CatalogScreen: React.FC<CatalogScreenProps> = ({ type }) => {
           </div>
         ) : (
           <div className="space-y-8">
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
               {displayedStreams.map((stream) => (
                 <TvMovieCard
                   key={`${stream.stream_type}-${stream.stream_id}`}
@@ -178,7 +178,7 @@ export const CatalogScreen: React.FC<CatalogScreenProps> = ({ type }) => {
               <div className="flex justify-center pt-4 pb-8">
                 <button 
                   onClick={() => setDisplayLimit(prev => prev + 50)}
-                  className="bg-white/5 hover:bg-white/10 border border-white/10 text-white font-black text-lg px-8 py-3 rounded-xl transition-all flex items-center gap-3 active:scale-95"
+                  className="bg-white/5 hover:bg-white/10 border border-white/10 text-white font-black text-lg px-10 py-4 rounded-xl transition-all flex items-center gap-3 active:scale-95 outline-none focus:ring-4 focus:ring-blue-500"
                 >
                   Carregar Mais
                 </button>

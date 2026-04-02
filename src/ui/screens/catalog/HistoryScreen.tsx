@@ -43,25 +43,25 @@ export const HistoryScreen: React.FC = () => {
   }, [repo]);
 
   return (
-    <div className="space-y-12">
-      <h1 className="text-5xl font-black flex items-center gap-4">
-        <History className="w-12 h-12 text-purple-500" />
+    <div className="space-y-8">
+      <h1 className="text-3xl font-black flex items-center gap-3">
+        <History className="w-8 h-8 text-purple-500" />
         Continuar Assistindo
       </h1>
 
       {loading ? (
-        <div className="flex flex-col items-center justify-center h-96 gap-6">
-          <Loader2 className="w-16 h-16 text-blue-500 animate-spin" />
-          <p className="text-2xl text-gray-400 font-black">Carregando histórico...</p>
+        <div className="flex flex-col items-center justify-center h-64 gap-4">
+          <Loader2 className="w-10 h-10 text-blue-500 animate-spin" />
+          <p className="text-xl text-gray-400 font-black">Carregando histórico...</p>
         </div>
       ) : streams.length === 0 ? (
-        <div className="flex flex-col items-center justify-center h-96 text-gray-500 gap-6">
-          <History className="w-24 h-24 opacity-20" />
-          <p className="text-3xl font-black text-white">Nenhum histórico ainda</p>
-          <p className="text-xl">Comece a assistir conteúdo para vê-lo aqui!</p>
+        <div className="flex flex-col items-center justify-center h-64 text-gray-500 gap-4">
+          <History className="w-16 h-16 opacity-20" />
+          <p className="text-2xl font-black text-white">Nenhum histórico ainda</p>
+          <p className="text-lg">Comece a assistir conteúdo para vê-lo aqui!</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-8">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
           {streams.map((stream) => (
             <motion.div
               key={`${stream.stream_type}-${stream.stream_id}`}

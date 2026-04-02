@@ -60,6 +60,7 @@ export const useAppStore = create<AppState>((set, get) => ({
 
     set({ isSyncing: true, syncProgress: 0 });
     try {
+      await repo.clearCache();
       await repo.sync((progress) => {
         set({ syncProgress: progress });
       });
