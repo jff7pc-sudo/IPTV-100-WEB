@@ -7,7 +7,7 @@ import React, { useState } from 'react';
 import { useAppStore } from '../../../di/AppModule';
 import { XtreamApi } from '../../../data/remote/XtreamApi';
 import { motion } from 'motion/react';
-import { LogIn, Server, User as UserIcon, Lock, AlertCircle, Loader2 } from 'lucide-react';
+import { LogIn, Server, User as UserIcon, Lock, AlertCircle, Loader2, Eye, EyeOff } from 'lucide-react';
 
 import { SecurityPrefs } from '../../../data/local/SecurityPrefs';
 
@@ -16,6 +16,7 @@ export const LoginScreen: React.FC = () => {
   const [url, setUrl] = useState(saved?.url || '');
   const [username, setUsername] = useState(saved?.username || '');
   const [password, setPassword] = useState(saved?.password || '');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const login = useAppStore((state) => state.login);
@@ -69,14 +70,14 @@ export const LoginScreen: React.FC = () => {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-lg bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[2rem] p-10 relative z-10 shadow-2xl"
+        className="w-full max-w-md bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[2rem] p-8 relative z-10 shadow-2xl"
       >
-        <div className="flex flex-col items-center mb-8">
-          <div className="w-20 h-20 bg-blue-600 rounded-2xl flex items-center justify-center mb-6 shadow-2xl shadow-blue-600/30">
-            <LogIn className="w-10 h-10 text-white" />
+        <div className="flex flex-col items-center mb-6">
+          <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mb-4 shadow-2xl shadow-blue-600/30">
+            <LogIn className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl font-black text-white tracking-tight">Bem-vindo</h1>
-          <p className="text-base text-gray-400 mt-2">Insira suas credenciais Xtream Codes</p>
+          <h1 className="text-2xl font-black text-white tracking-tight">Bem-vindo</h1>
+          <p className="text-sm text-gray-400 mt-1">Insira suas credenciais Xtream Codes</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -115,13 +116,20 @@ export const LoginScreen: React.FC = () => {
             <div className="relative">
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Sua senha"
-                className="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-12 pr-4 text-base text-white placeholder:text-gray-600 focus:outline-none focus:ring-4 focus:ring-blue-500 transition-all"
+                className="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-12 pr-14 text-base text-white placeholder:text-gray-600 focus:outline-none focus:ring-4 focus:ring-blue-500 transition-all"
                 required
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 p-1 text-gray-500 hover:text-white transition-colors"
+              >
+                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
             </div>
           </div>
 

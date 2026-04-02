@@ -1,19 +1,24 @@
 #!/bin/bash
 
-# 1. Garante que as dependências do projeto estão instaladas
-echo "--- Instalando dependências (npm install) ---"
+# Script de build para Android (IPTV App)
+# Executar na raiz do projeto
+
+echo "🚀 Iniciando build do projeto..."
+
+# 1. Instalar dependências
+echo "📦 Instalando dependências..."
 npm install
 
-# 2. Gera os arquivos de produção do React/Vite (pasta dist)
-echo "--- Gerando build do React (npm run build) ---"
+# 2. Build do projeto web
+echo "🏗️ Gerando build web..."
 npm run build
 
-# 3. Sincroniza os arquivos novos com a pasta nativa do Android
-echo "--- Sincronizando com Capacitor (npx cap sync) ---"
+# 3. Sincronizar com Capacitor
+echo "🔄 Sincronizando com Capacitor..."
 npx cap sync
 
-# 4. Abre o Android Studio com o projeto atualizado
-echo "--- Abrindo o Android Studio ---"
+# 4. Abrir Android Studio
+echo "🤖 Abrindo Android Studio..."
 npx cap open android
 
-echo "--- Tudo pronto! Agora compile pelo Android Studio ---"
+echo "✅ Processo concluído! Agora gere o APK no Android Studio."
