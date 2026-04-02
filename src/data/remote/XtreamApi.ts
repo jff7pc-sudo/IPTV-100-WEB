@@ -218,7 +218,27 @@ export class XtreamApi {
     if (this.baseUrl === 'http://demo.iptv') {
       return 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8'; // Sample HLS stream
     }
-    const ext = extension || 'm3u8';
-    return `${this.baseUrl}/${type}/${this.username}/${this.password}/${streamId}.${ext}`;
+    
+    let ext = extension;
+    if (!ext) {
+      if (type === 'movie') ext = 'mp4';
+      else if (type === 'series') ext = 'mp4';
+      else ext = 'm3u8';
+    }
+    
+    const targetUrl = `${this.baseUrl}/${type}/${this.username}/${this.password}/${streamId}.${ext}`;
+    
+    if (Capacitor.isNativePlatform()) {
+      return targetUrl;
+    }
+    
+    // For streams, we only proxy if it's HLS (m3u8) to bypass CORS for the manifest.
+    // For direct video files (mp4/mkv), direct access is usually better if the server allows it.
+    // However, if the user is getting "no supported source", it might be CORS or wrong extension.
+    if (ext === 'm3u8') {
+      return `/api/proxy?url=${encodeURIComponent(targetUrl)}`;
+    }
+    
+    return targetUrl;
   }
 }

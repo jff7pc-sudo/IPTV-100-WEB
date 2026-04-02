@@ -5,7 +5,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import Hls from 'hls.js';
-import { Play, Pause, Volume2, VolumeX, Maximize, Minimize, SkipBack, SkipForward, X } from 'lucide-react';
+import { Play, Pause, Volume2, VolumeX, Maximize, Minimize, SkipBack, SkipForward, X, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface VideoPlayerProps {
@@ -32,7 +32,9 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ url, title, onClose })
 
     let hls: Hls | null = null;
 
-    if (Hls.isSupported()) {
+    const isHls = url.toLowerCase().includes('.m3u8') || url.toLowerCase().includes('type=m3u8');
+
+    if (isHls && Hls.isSupported()) {
       hls = new Hls({
         enableWorker: true,
         lowLatencyMode: true,
@@ -44,7 +46,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ url, title, onClose })
       });
       hls.on(Hls.Events.ERROR, (event, data) => {
         if (data.fatal) {
-          console.error("HLS error fatal, falling back", data);
+          console.error("HLS error fatal, falling back", data.type, data.details);
           hls?.destroy();
           video.src = url;
           video.play().catch(console.error);
@@ -153,8 +155,9 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ url, title, onClose })
         onLoadedMetadata={handleLoadedMetadata}
         onClick={togglePlay}
         onError={(e) => {
-          console.error("Video error:", e);
-          setError("Erro ao carregar o vídeo. Tente novamente mais tarde.");
+          const videoError = (e.target as HTMLVideoElement).error;
+          console.error("Video error:", videoError?.code, videoError?.message);
+          setError("Erro ao carregar o vídeo. Verifique sua conexão ou o formato do arquivo.");
           setLoading(false);
         }}
       />

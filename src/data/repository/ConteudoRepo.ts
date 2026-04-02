@@ -232,6 +232,10 @@ export class ConteudoRepo {
     SecurityPrefs.saveHistory(history);
   }
 
+  clearHistory() {
+    SecurityPrefs.saveHistory([]);
+  }
+
   getStreamUrl(streamId: number, type: 'live' | 'movie' | 'series' = 'live', extension?: string): string {
     if (!this.xtreamApi) throw new Error('Not authenticated');
     return this.xtreamApi.getStreamUrl(streamId, type, extension);

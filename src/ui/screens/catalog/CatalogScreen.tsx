@@ -92,15 +92,6 @@ export const CatalogScreen: React.FC<CatalogScreenProps> = ({ type }) => {
     loadStreams();
   }, [repo, selectedCategory, type]);
 
-  const [displayLimit, setDisplayLimit] = useState(25);
-  const sentinelRef = useRef<HTMLDivElement>(null);
-
-  const filteredStreams = React.useMemo(() => {
-    if (!searchQuery) return streams;
-    const query = searchQuery.toLowerCase();
-    return streams.filter((s) => s.name.toLowerCase().includes(query));
-  }, [streams, searchQuery]);
-
   const loadMore = useCallback(() => {
     setDisplayLimit(prev => {
       if (prev >= filteredStreams.length) return prev;
@@ -167,8 +158,8 @@ export const CatalogScreen: React.FC<CatalogScreenProps> = ({ type }) => {
               onClick={() => setSelectedCategory(cat.category_id)}
               className={`w-full text-left px-4 py-3 rounded-xl transition-all duration-200 outline-none border-2 ${
                 selectedCategory === cat.category_id
-                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20 border-blue-500'
-                  : 'text-gray-400 hover:bg-white/5 hover:text-white border-white/20 focus:border-blue-500 focus:bg-blue-500/20 focus:ring-4 focus:ring-blue-500'
+                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20 border-white'
+                  : 'text-gray-400 hover:bg-white/5 hover:text-white border-transparent focus:border-white focus:bg-transparent'
               }`}
             >
               <span className="text-base font-black line-clamp-1">{cat.category_name}</span>
