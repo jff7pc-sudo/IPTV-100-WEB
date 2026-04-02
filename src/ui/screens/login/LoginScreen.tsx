@@ -13,9 +13,9 @@ import { SecurityPrefs } from '../../../data/local/SecurityPrefs';
 
 export const LoginScreen: React.FC = () => {
   const saved = SecurityPrefs.getCredentials();
-  const [url, setUrl] = useState(saved?.url || '');
-  const [username, setUsername] = useState(saved?.username || '');
-  const [password, setPassword] = useState(saved?.password || '');
+  const [url, setUrl] = useState(saved?.url || 'http://srv.sstv.cx');
+  const [username, setUsername] = useState(saved?.username || 'a5Gqph17jM');
+  const [password, setPassword] = useState(saved?.password || 'p7AUwNFsbP');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

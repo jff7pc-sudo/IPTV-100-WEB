@@ -36,26 +36,11 @@ export const CatalogScreen: React.FC<CatalogScreenProps> = ({ type }) => {
   const [displayLimit, setDisplayLimit] = useState(25);
   const sentinelRef = useRef<HTMLDivElement>(null);
 
-  const loadMore = useCallback(() => {
-    setDisplayLimit(prev => {
-      if (prev >= filteredStreams.length) return prev;
-      return prev + 25;
-    });
-  }, [filteredStreams.length]);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting) {
-        loadMore();
-      }
-    }, { threshold: 0.1 });
-
-    if (sentinelRef.current) {
-      observer.observe(sentinelRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, [loadMore]);
+  const filteredStreams = React.useMemo(() => {
+    if (!searchQuery) return streams;
+    const query = searchQuery.toLowerCase();
+    return streams.filter((s) => s.name.toLowerCase().includes(query));
+  }, [streams, searchQuery]);
 
   useEffect(() => {
     if (!repo) return;
@@ -84,10 +69,6 @@ export const CatalogScreen: React.FC<CatalogScreenProps> = ({ type }) => {
   }, [repo, type]);
 
   useEffect(() => {
-    setDisplayLimit(25);
-  }, [selectedCategory, type]);
-
-  useEffect(() => {
     if (!repo || !selectedCategory) return;
     const loadStreams = async () => {
       // Only show loader if data is NOT cached
@@ -111,15 +92,43 @@ export const CatalogScreen: React.FC<CatalogScreenProps> = ({ type }) => {
     loadStreams();
   }, [repo, selectedCategory, type]);
 
+  const [displayLimit, setDisplayLimit] = useState(25);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
   const filteredStreams = React.useMemo(() => {
     if (!searchQuery) return streams;
     const query = searchQuery.toLowerCase();
     return streams.filter((s) => s.name.toLowerCase().includes(query));
   }, [streams, searchQuery]);
 
+  const loadMore = useCallback(() => {
+    setDisplayLimit(prev => {
+      if (prev >= filteredStreams.length) return prev;
+      return prev + 25;
+    });
+  }, [filteredStreams.length]);
+
   const displayedStreams = React.useMemo(() => {
     return filteredStreams.slice(0, displayLimit);
   }, [filteredStreams, displayLimit]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        loadMore();
+      }
+    }, { threshold: 0.1 });
+
+    if (sentinelRef.current) {
+      observer.observe(sentinelRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [loadMore]);
+
+  useEffect(() => {
+    setDisplayLimit(25);
+  }, [selectedCategory, type]);
 
   const handleToggleFavorite = (id: number) => {
     if (!repo) return;
@@ -156,10 +165,10 @@ export const CatalogScreen: React.FC<CatalogScreenProps> = ({ type }) => {
             <button
               key={cat.category_id}
               onClick={() => setSelectedCategory(cat.category_id)}
-              className={`w-full text-left px-4 py-3 rounded-xl transition-all duration-200 outline-none focus:ring-4 focus:ring-white ${
+              className={`w-full text-left px-4 py-3 rounded-xl transition-all duration-200 outline-none border-2 ${
                 selectedCategory === cat.category_id
-                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20'
-                  : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20 border-blue-500'
+                  : 'text-gray-400 hover:bg-white/5 hover:text-white border-white/20 focus:border-blue-500 focus:bg-blue-500/20 focus:ring-4 focus:ring-blue-500'
               }`}
             >
               <span className="text-base font-black line-clamp-1">{cat.category_name}</span>
@@ -213,21 +222,19 @@ export const CatalogScreen: React.FC<CatalogScreenProps> = ({ type }) => {
                   onToggleFavorite={handleToggleFavorite}
                 />
               ))}
+              <div ref={sentinelRef} className="h-10" />
             </div>
-            <div ref={sentinelRef} className="h-10" />
           </div>
         )}
       </div>
 
-      <AnimatePresence>
-        {selectedSeries && (
-          <SeriesDetail
-            series={selectedSeries}
-            onClose={() => setSelectedSeries(null)}
-            onPlayEpisode={handlePlayEpisode}
-          />
-        )}
-      </AnimatePresence>
+      {selectedSeries && (
+        <SeriesDetail
+          series={selectedSeries}
+          onClose={() => setSelectedSeries(null)}
+          onPlayEpisode={handlePlayEpisode}
+        />
+      )}
 
       {selectedStream && repo && (
         <VideoPlayer

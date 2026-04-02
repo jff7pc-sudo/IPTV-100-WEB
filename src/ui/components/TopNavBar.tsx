@@ -24,7 +24,7 @@ export const TopNavBar: React.FC = () => {
   ];
 
   return (
-    <nav className="h-14 bg-black/90 backdrop-blur-xl border-b border-white/10 flex items-center px-6 z-50 flex-shrink-0">
+    <nav className="h-14 flex items-center px-6 z-50 flex-shrink-0">
       {/* User Info on the left */}
       <div className="flex items-center gap-4 text-xs text-gray-400">
         <div className="flex items-center gap-1.5">
@@ -46,10 +46,10 @@ export const TopNavBar: React.FC = () => {
             key={item.name}
             to={item.path}
             className={({ isActive }) =>
-              `flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all duration-300 focus:ring-4 focus:ring-white outline-none ${
+              `flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all duration-300 outline-none border-2 ${
                 isActive 
-                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/40' 
-                  : 'text-gray-400 hover:text-white hover:bg-white/10'
+                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/40 border-blue-500' 
+                  : 'text-gray-400 hover:text-white hover:bg-white/10 border-white/20 focus:border-blue-500 focus:bg-blue-500/20 focus:ring-4 focus:ring-blue-500'
               }`
             }
           >

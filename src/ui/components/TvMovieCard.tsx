@@ -29,7 +29,7 @@ export const TvMovieCard = React.memo<TvMovieCardProps>(({ stream, onClick, isFa
           onClick(stream);
         }
       }}
-      className="relative group aspect-[2/3] rounded-xl overflow-hidden bg-white/5 cursor-pointer shadow-lg outline-none focus:ring-4 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-black"
+      className="relative group aspect-[2/3] rounded-xl overflow-hidden bg-white/5 cursor-pointer shadow-lg outline-none border-2 border-white/20 focus:border-blue-500 focus:bg-blue-500/20 focus:ring-4 focus:ring-blue-500"
     >
       <img
         src={stream.stream_icon || `https://picsum.photos/seed/${stream.stream_id}/300/450`}
