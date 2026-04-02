@@ -17,7 +17,9 @@ interface CatalogScreenProps {
 }
 
 export const CatalogScreen: React.FC<CatalogScreenProps> = ({ type }) => {
+  console.log(`CatalogScreen rendering for type: ${type}`);
   const repo = useAppStore((state) => state.repo);
+  console.log('Repo available:', !!repo);
   const [categories, setCategories] = useState<Category[]>([]);
   const [streams, setStreams] = useState<Stream[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -28,6 +30,8 @@ export const CatalogScreen: React.FC<CatalogScreenProps> = ({ type }) => {
   const [selectedSeries, setSelectedSeries] = useState<Stream | null>(null);
   const [selectedEpisode, setSelectedEpisode] = useState<any>(null);
   const [favorites, setFavorites] = useState<number[]>([]);
+  
+  console.log('State:', { loading, error, categoriesCount: categories.length, streamsCount: streams.length });
 
   const [displayLimit, setDisplayLimit] = useState(25);
   const sentinelRef = useRef<HTMLDivElement>(null);
@@ -140,9 +144,9 @@ export const CatalogScreen: React.FC<CatalogScreenProps> = ({ type }) => {
   };
 
   return (
-    <div className="flex gap-6">
+    <div className="flex flex-col md:flex-row gap-6 p-4">
       {/* Sidebar Categories */}
-      <aside className="w-64 flex-shrink-0 h-[calc(100vh-6rem)] overflow-y-auto pr-2">
+      <aside className="w-full md:w-64 flex-shrink-0 overflow-y-auto pr-2">
         <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
           <Filter className="w-4 h-4 text-blue-500" />
           Categorias
