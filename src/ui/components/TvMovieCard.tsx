@@ -18,18 +18,11 @@ interface TvMovieCardProps {
 
 export const TvMovieCard = React.memo<TvMovieCardProps>(({ stream, onClick, isFavorite, onToggleFavorite }) => {
   return (
-    <motion.div
+    <motion.button
       whileHover={{ scale: 1.05 }}
       whileFocus={{ scale: 1.05 }}
-      tabIndex={0}
       onClick={() => onClick(stream)}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          onClick(stream);
-        }
-      }}
-      className="relative group aspect-[2/3] rounded-xl overflow-hidden bg-white/5 cursor-pointer shadow-lg outline-none border-2 border-white/20 focus:border-blue-500 focus:bg-blue-500/20 focus:ring-4 focus:ring-blue-500"
+      className="relative group aspect-[2/3] rounded-xl overflow-hidden bg-white/5 cursor-pointer shadow-lg outline-none border-2 border-white/20 focus:border-blue-500 focus:bg-blue-500/20 focus:ring-4 focus:ring-blue-500 text-left w-full block"
     >
       <img
         src={stream.stream_icon || `https://picsum.photos/seed/${stream.stream_id}/300/450`}
@@ -66,6 +59,6 @@ export const TvMovieCard = React.memo<TvMovieCardProps>(({ stream, onClick, isFa
           ★ {stream.rating}
         </div>
       )}
-    </motion.div>
+    </motion.button>
   );
 });

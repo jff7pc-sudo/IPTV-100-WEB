@@ -14,9 +14,38 @@ import { FavoritesScreen } from './ui/screens/catalog/FavoritesScreen';
 import { HistoryScreen } from './ui/screens/catalog/HistoryScreen';
 import { SyncScreen } from './ui/screens/auth/SyncScreen';
 import { Loader2 } from 'lucide-react';
+import { useTVRemote } from './hooks/useTVRemote';
 
 export default function App() {
   const { isAuthenticated, isInitializing, isSyncing, init } = useAppStore();
+
+  useTVRemote({
+    onAction: (action) => {
+      // Don't handle global actions if a modal/video player is open
+      const hasModal = document.querySelector('.fixed.inset-0');
+      if (hasModal) return false; // Let modals handle their own keys
+
+      if (action === 'BACK') {
+        if (window.location.pathname !== '/') {
+          window.history.back();
+          return true;
+        }
+      }
+      return false;
+    }
+  });
+
+  // Global focus scroll for TV
+  useEffect(() => {
+    const handleFocus = (e: FocusEvent) => {
+      const target = e.target as HTMLElement;
+      if (target && target !== document.body && target !== document.documentElement && target.scrollIntoView) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+      }
+    };
+    window.addEventListener('focus', handleFocus, true);
+    return () => window.removeEventListener('focus', handleFocus, true);
+  }, []);
 
   useEffect(() => {
     init();

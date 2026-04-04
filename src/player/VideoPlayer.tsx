@@ -3,10 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import Hls from 'hls.js';
 import { Play, Pause, Volume2, VolumeX, Maximize, Minimize, SkipBack, SkipForward, X, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useTVRemote } from '../hooks/useTVRemote';
 
 interface VideoPlayerProps {
   url: string;
@@ -26,6 +27,57 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ url, title, onClose })
   const [loading, setLoading] = useState(true);
   const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  const togglePlay = useCallback(() => {
+    if (videoRef.current) {
+      if (isPlaying) videoRef.current.pause();
+      else videoRef.current.play();
+      setIsPlaying(!isPlaying);
+    }
+  }, [isPlaying]);
+
+  useTVRemote({
+    onAction: (action) => {
+      setShowControls(true);
+      if (controlsTimeoutRef.current) clearTimeout(controlsTimeoutRef.current);
+      controlsTimeoutRef.current = setTimeout(() => setShowControls(false), 3000);
+
+      if (!videoRef.current) return false;
+
+      switch (action) {
+        case 'PLAY':
+          videoRef.current.play();
+          setIsPlaying(true);
+          return true;
+        case 'PAUSE':
+          videoRef.current.pause();
+          setIsPlaying(false);
+          return true;
+        case 'PLAY_PAUSE':
+        case 'ENTER':
+          togglePlay();
+          return true;
+        case 'RIGHT':
+        case 'FF':
+          videoRef.current.currentTime += 10;
+          return true;
+        case 'LEFT':
+        case 'RW':
+          videoRef.current.currentTime -= 10;
+          return true;
+        case 'UP':
+          setVolume(prev => Math.min(prev + 0.1, 1));
+          return true;
+        case 'DOWN':
+          setVolume(prev => Math.max(prev - 0.1, 0));
+          return true;
+        case 'BACK':
+          onClose();
+          return true;
+      }
+      return false;
+    }
+  });
+
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -42,24 +94,24 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ url, title, onClose })
       hls.loadSource(url);
       hls.attachMedia(video);
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        video.play().catch(console.error);
+        video.play().catch((err) => console.error("Play error:", err?.message || err));
       });
       hls.on(Hls.Events.ERROR, (event, data) => {
         if (data.fatal) {
           console.error("HLS error fatal, falling back", data.type, data.details);
           hls?.destroy();
           video.src = url;
-          video.play().catch(console.error);
+          video.play().catch((err) => console.error("Play error:", err?.message || err));
         }
       });
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
       video.src = url;
       video.addEventListener('loadedmetadata', () => {
-        video.play().catch(console.error);
+        video.play().catch((err) => console.error("Play error:", err?.message || err));
       });
     } else {
       video.src = url;
-      video.play().catch(console.error);
+      video.play().catch((err) => console.error("Play error:", err?.message || err));
     }
 
     return () => {
@@ -70,62 +122,22 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ url, title, onClose })
   }, [url]);
 
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      setShowControls(true);
-      if (controlsTimeoutRef.current) clearTimeout(controlsTimeoutRef.current);
-      controlsTimeoutRef.current = setTimeout(() => setShowControls(false), 3000);
+    // Controls timeout logic without mouse/keyboard events
+    setShowControls(true);
+    if (controlsTimeoutRef.current) clearTimeout(controlsTimeoutRef.current);
+    controlsTimeoutRef.current = setTimeout(() => setShowControls(false), 3000);
 
-      if (!videoRef.current) return;
-
-      switch (e.key) {
-        case ' ':
-        case 'Enter':
-          togglePlay();
-          break;
-        case 'ArrowRight':
-          videoRef.current.currentTime += 10;
-          break;
-        case 'ArrowLeft':
-          videoRef.current.currentTime -= 10;
-          break;
-        case 'ArrowUp':
-          setVolume(prev => Math.min(prev + 0.1, 1));
-          break;
-        case 'ArrowDown':
-          setVolume(prev => Math.max(prev - 0.1, 0));
-          break;
-        case 'Escape':
-        case 'Backspace':
-          onClose();
-          break;
-      }
-    };
-
-    window.addEventListener('mousemove', () => {
-      setShowControls(true);
-      if (controlsTimeoutRef.current) clearTimeout(controlsTimeoutRef.current);
-      controlsTimeoutRef.current = setTimeout(() => setShowControls(false), 3000);
-    });
-    window.addEventListener('keydown', handleKeyDown);
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
       if (controlsTimeoutRef.current) clearTimeout(controlsTimeoutRef.current);
     };
-  }, [onClose, isPlaying]);
+  }, [isPlaying]);
+
 
   useEffect(() => {
     if (videoRef.current) {
       videoRef.current.volume = isMuted ? 0 : volume;
     }
   }, [volume, isMuted]);
-
-  const togglePlay = () => {
-    if (videoRef.current) {
-      if (isPlaying) videoRef.current.pause();
-      else videoRef.current.play();
-      setIsPlaying(!isPlaying);
-    }
-  };
 
   const handleTimeUpdate = () => {
     if (videoRef.current) {

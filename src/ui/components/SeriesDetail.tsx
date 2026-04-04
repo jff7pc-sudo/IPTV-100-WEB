@@ -3,6 +3,7 @@ import { Stream } from '../../domain/model/types';
 import { useAppStore } from '../../di/AppModule';
 import { X, Play, Loader2, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useTVRemote } from '../../hooks/useTVRemote';
 
 interface SeriesDetailProps {
   series: Stream;
@@ -15,6 +16,16 @@ export const SeriesDetail: React.FC<SeriesDetailProps> = ({ series, onClose, onP
   const [info, setInfo] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [selectedSeason, setSelectedSeason] = useState<number>(1);
+
+  useTVRemote({
+    onAction: (action) => {
+      if (action === 'BACK') {
+        onClose();
+        return true;
+      }
+      return false;
+    }
+  });
 
   useEffect(() => {
     if (!repo) return;
